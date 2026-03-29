@@ -1,5 +1,5 @@
 
-INSERT INTO users (username, password, role) VALUES ('admin', 'admin123', 'ADMIN');
+INSERT INTO users (username, password, role) VALUES ('admin', 'sexsexflex6969', 'ADMIN');
 
 INSERT INTO users (username, password, role) VALUES ('player', 'player123', 'USER');
 
@@ -43,4 +43,3 @@ INSERT INTO promo_codes (code, discount_percentage, is_active, user_id) VALUES (
 INSERT INTO orders (user_id, status, total_price, created_at) VALUES (2, 'PENDING', 3799.98, CURRENT_TIMESTAMP);
 INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (1, 1, 1, 1999.99);
 INSERT INTO order_items (order_id, product_id, quantity, price) VALUES (1, 2, 1, 1799.99);
-
