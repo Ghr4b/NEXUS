@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Shopping Cart - CyberShop')}"></head>
+
+<body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container my-5">
+        <h2 class="mb-4"><i class="bi bi-cart-check"></i> Your Cart</h2>
+
+        <div th:if="${error}" class="alert alert-danger" th:text="${error}"></div>
+        <div th:if="${message}" class="alert alert-success" th:text="${message}"></div>
+
+        <div class="row" th:if="${!#lists.isEmpty(cartItems)}">
+            <div class="col-md-8">
+                <div class="table-responsive">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Product</th>
+                                <th>Price</th>
+                                <th>Qty</th>
+                                <th>Subtotal</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr th:each="item : ${cartItems}">
+                                <td>
+                                    <h6 class="mb-0" th:text="${item.product.name}">Product Name</h6>
+                                </td>
+                                <td th:text="${'$' + item.product.price}">$0.00</td>
+                                <td th:text="${item.quantity}">1</td>
+                                <td class="fw-bold" th:text="${'$' + item.subtotal}">$0.00</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body">
+                        <h4 class="card-title mb-4">Summary</h4>
+                        <form action="/cart/apply-promo" method="post" class="mb-4">
+                            <label class="form-label small text-muted">Gift card or discount code</label>
+                            <div class="input-group">
+                                <input type="text" name="promoCode" class="form-control" placeholder="CYBERSHOP-...">
+                                <button type="submit" class="btn btn-outline-secondary">Apply</button>
+                            </div>
+                        </form>
+                        <hr>
+                        <div class="d-flex justify-content-between mb-3" th:if="${discount > 0}">
+                            <span class="text-success">Discount Applied</span>
+                            <span class="text-success fw-bold" th:text="${'-' + discount + '%'}">-0%</span>
+                        </div>
+                        <div class="d-grid gap-2">
+                            <form action="/cart/checkout" method="post">
+                                <button type="submit" class="btn btn-success btn-lg w-100">Checkout (Cash on
+                                    Delivery)</button>
+                            </form>
+                            <a href="/catalog" class="btn btn-link text-decoration-none">Continue Shopping</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(cartItems)}" class="text-center py-5">
+            <i class="bi bi-cart-x display-1 text-muted"></i>
+            <h3 class="mt-3">Your cart is empty</h3>
+            <a href="/catalog" class="btn btn-primary mt-3">Start Shopping</a>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+
+</html>

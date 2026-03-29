@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head(${product.name} + ' - CyberShop')}"></head>
+
+<body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container my-5">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="/catalog">Catalog</a></li>
+                <li class="breadcrumb-item active" aria-current="page" th:text="${product.name}">Product Name</li>
+            </ol>
+        </nav>
+
+        <div class="row border rounded shadow-sm p-4 bg-white">
+            <div class="col-md-5 text-center">
+                <img th:src="${product.imageUrl}" class="img-fluid rounded" style="max-height: 400px;" alt="Product">
+            </div>
+            <div class="col-md-7 d-flex flex-column justify-content-center">
+                <h2 class="mb-3" th:text="${product.name}">Product Name</h2>
+                <div class="mb-3">
+                    <span class="badge bg-secondary me-2" th:text="${product.category}">Category</span>
+                    <span class="text-muted" th:text="${'Stock: ' + product.stockQuantity}">Stock: 0</span>
+                </div>
+                <h3 class="text-success mb-4" th:text="${'$' + product.price}">$0.00</h3>
+                <p class="lead mb-4" th:text="${product.description}">Product Description</p>
+
+                <form action="/cart/add" method="post" class="d-flex align-items-center mt-auto">
+                    <input type="hidden" name="productId" th:value="${product.id}">
+                    <input type="number" name="quantity" class="form-control w-25 me-3" value="1" min="1"
+                        th:max="${product.stockQuantity}">
+                    <button type="submit" class="btn btn-primary btn-lg" th:disabled="${product.stockQuantity <= 0}">
+                        <i class="bi bi-cart-plus"></i> Add to Cart
+                    </button>
+                    <button type="button" class="btn btn-outline-danger btn-lg ms-3" title="Add to Favourites"><i
+                            class="bi bi-heart"></i></button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+
+</html>
