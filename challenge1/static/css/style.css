@@ -1,0 +1,144 @@
+:root {
+    --bg-color: #0f0f0f;
+    --text-color: #e0e0e0;
+    --accent-color: #ff3333;
+    /* Redacted red */
+    --secondary-color: #00ff00;
+    /* Terminal green */
+    --card-bg: #1a1a1a;
+    --border-color: #333;
+}
+
+body {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    font-family: 'Courier New', Courier, monospace;
+    /* Typewriter style */
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+header {
+    border-bottom: 2px solid var(--accent-color);
+    padding: 20px 0;
+    margin-bottom: 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+h1,
+h2,
+h3 {
+    text-transform: uppercase;
+    letter-spacing: 2px;
+}
+
+.logo {
+    color: var(--accent-color);
+    font-size: 24px;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+/* Forms */
+input[type="text"],
+input[type="password"],
+input[type="email"],
+textarea,
+select {
+    background-color: #000;
+    border: 1px solid var(--secondary-color);
+    color: var(--secondary-color);
+    padding: 10px;
+    font-family: inherit;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: var(--accent-color);
+    color: #000;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: inherit;
+    font-weight: bold;
+    text-transform: uppercase;
+}
+
+button:hover {
+    opacity: 0.8;
+}
+
+/* Cards */
+.file-card {
+    background-color: var(--card-bg);
+    border: 1px solid var(--border-color);
+    padding: 20px;
+    margin-bottom: 20px;
+    position: relative;
+}
+
+.file-card::before {
+    content: "SECRET";
+    /* Watermark style */
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    color: rgba(255, 51, 51, 0.1);
+    font-size: 40px;
+    font-weight: bold;
+    pointer-events: none;
+}
+
+.hash-code {
+    font-family: monospace;
+    color: var(--secondary-color);
+    font-size: 0.8em;
+    word-break: break-all;
+}
+
+/* Tables */
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th,
+td {
+    padding: 10px;
+    border-bottom: 1px solid var(--border-color);
+    text-align: left;
+}
+
+/* Utility */
+.redacted {
+    background-color: #000;
+    color: #000;
+}
+
+.redacted:hover {
+    color: #fff;
+}
+
+.alert-error {
+    color: var(--accent-color);
+    border: 1px solid var(--accent-color);
+    padding: 10px;
+    margin-bottom: 20px;
+}
+
+.alert-success {
+    color: var(--secondary-color);
+    border: 1px solid var(--secondary-color);
+    padding: 10px;
+    margin-bottom: 20px;
+}
