@@ -5,7 +5,7 @@ COPY target/*.jar app.jar
 RUN mkdir -p /tmp/ctf_payload && chown ctfuser:ctfgroup /tmp/ctf_payload
 
 # The Prize
-RUN echo "CTF{redos_to_jndi_rce_master}" > /thebigflag.txt
+RUN echo "IFTxSecurinets{22cf023b5edf2c6f0914d8095cf3ac38}" > /thebigflag.txt
 RUN chown root:root /thebigflag.txt && chmod 444 /thebigflag.txt
 COPY entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
