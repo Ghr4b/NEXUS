@@ -1,0 +1,6 @@
+services:
+  webapp:
+    build: ./goproj
+    restart: always
+    ports:
+      - "8111:80"
