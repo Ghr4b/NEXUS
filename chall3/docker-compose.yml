@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    restart: always
+    environment:
+      - logDir=/logs
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    labels:
+      - "autoheal=true"
+
+  autoheal:
+    image: willfarrell/autoheal:latest
+    restart: always
+    environment:
+      - AUTOHEAL_CONTAINER_LABEL=autoheal
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
