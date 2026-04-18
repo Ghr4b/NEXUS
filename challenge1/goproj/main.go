@@ -48,7 +48,7 @@ func main() {
 				cookies[i] = c + "; SameSite=Strict"
 			}
 		}
-	}, false)
+	})
 
 	beego.Run()
 }
