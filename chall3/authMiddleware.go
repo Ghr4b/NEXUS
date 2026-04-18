@@ -64,7 +64,7 @@ func authMiddleware(next http.Handler) http.Handler {
 func adminMiddleware(next http.Handler) http.Handler {
 	return authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		role, ok := r.Context().Value(userRoleKey).(int)
-		if !ok || role != 1 { // change this to role = 0
+		if !ok || role != 0 { // change this to role = 0
 			http.Error(w, "Forbidden", http.StatusForbidden)
 			return
 		}
