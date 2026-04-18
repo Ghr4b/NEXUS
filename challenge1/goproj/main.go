@@ -5,6 +5,8 @@ import (
 	_ "public_disclosure/models"
 	_ "public_disclosure/routers"
 
+	"strings"
+
 	"github.com/beego/beego/v2/client/orm"
 	beego "github.com/beego/beego/v2/server/web"
 
@@ -38,6 +40,15 @@ func main() {
 		ctx.Output.Header("X-XSS-Protection", "1; mode=block")
 
 	})
+
+	beego.InsertFilter("*", beego.FinishRouter, func(ctx *beecontext.Context) {
+		cookies := ctx.ResponseWriter.Header()["Set-Cookie"]
+		for i, c := range cookies {
+			if strings.Contains(c, "_xsrf=") && !strings.Contains(c, "SameSite=") {
+				cookies[i] = c + "; SameSite=Strict"
+			}
+		}
+	}, false)
 
 	beego.Run()
 }
