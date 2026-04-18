@@ -26,6 +26,6 @@ COPY --from=builder /build/conf ./conf
 COPY --from=builder /build/static ./static
 COPY --from=builder /build/views ./views
 
-EXPOSE 80
+EXPOSE 8111
 
 CMD ["./public_disclosure"]

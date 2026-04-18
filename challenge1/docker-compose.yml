@@ -3,4 +3,4 @@ services:
     build: ./goproj
     restart: always
     ports:
-      - "8083:80"
+      - "8083:8111"
