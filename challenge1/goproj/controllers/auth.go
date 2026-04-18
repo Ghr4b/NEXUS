@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"html/template"
 	"public_disclosure/models"
 
 	"github.com/beego/beego/v2/client/orm"
@@ -13,25 +14,17 @@ type AuthController struct {
 }
 
 func (c *AuthController) Prepare() {
+	c.Data["xsrfdata"] = template.HTML(c.XSRFFormHTML())
 	c.Layout = "layout/public.tpl"
 }
 
 // Login
-// Login
 func (c *AuthController) Login() {
-	// 1. Grab the 'next' parameter (this is the vulnerable part)
-	next := c.GetString("next")
-	if next == "" {
-		next = "/staff/dashboard" // Default fallback
-	}
-
-	// 2. If the user is ALREADY logged in, bounce them immediately
 	if c.GetSession("user_id") != nil {
-		c.Redirect(next, 302)
+		c.Redirect("/staff/dashboard", 302)
 		return
 	}
 
-	// 3. Handle actual login attempts
 	if c.Ctx.Input.IsPost() {
 		username := c.GetString("username")
 		password := c.GetString("password")
@@ -47,8 +40,7 @@ func (c *AuthController) Login() {
 				c.SetSession("is_staff", user.IsStaff)
 				c.SetSession("is_active", user.IsActive)
 
-				// 4. Redirect to 'next' upon successful login
-				c.Redirect(next, 302)
+				c.Redirect("/staff/dashboard", 302)
 				return
 			}
 		}

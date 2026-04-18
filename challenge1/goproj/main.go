@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt" // Added for http.SameSiteNoneMode
+	"fmt"
 	_ "public_disclosure/models"
 	_ "public_disclosure/routers"
 

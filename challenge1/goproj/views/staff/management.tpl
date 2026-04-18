@@ -1,6 +1,6 @@
 <h2>// STAFF REQUEST MANAGEMENT</h2>
 
-
+<form style="display:none;">{{.xsrfdata}}</form>
 
 <div class="filter-panel" style="border: 1px solid var(--secondary-color); padding: 15px; margin-bottom: 20px;">
     <h3>FILTER REQUESTS</h3>
@@ -71,12 +71,14 @@
             }
         });
 
-
+        const xsrfInput = document.querySelector('input[name="_xsrf"]');
+        const xsrfToken = xsrfInput ? xsrfInput.value : '';
 
         fetch('/staff/management/search', {
             method: 'POST',
             headers: {
-                'Content-Type': 'application/json'
+                'Content-Type': 'application/json',
+                'X-Xsrftoken': xsrfToken
             },
             body: JSON.stringify(filters)
         })
