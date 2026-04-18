@@ -11,6 +11,7 @@ import (
 
 func main() {
 	ConnectDB()
+	InitDB()
 
 	r := chi.NewRouter()
 

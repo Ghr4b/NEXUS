@@ -19,8 +19,8 @@ var MongoClient *mongo.Client
 // ConnectDB establishes the connection to MongoDB
 func ConnectDB() {
 	// Full URI with credentials
-	uri := "mongodb+srv://hadigraba1_db_user:XmZ53FhuwVIRWYmw@cluster0.pkg9exo.mongodb.net/?appName=Cluster0"
-	
+	uri := "mongodb+srv://Ghr4b:9EpQ6UnOxaSXChb3@cluster0.yavsujd.mongodb.net/?appName=Cluster0"
+
 	clientOptions := options.Client().ApplyURI(uri)
 
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
@@ -38,9 +38,9 @@ func ConnectDB() {
 	}
 
 	fmt.Println("Successfully connected to MongoDB!")
-	
+
 	MongoClient = client
-	
+
 	// Default database we will use. Change "webapp" to your intended database name.
 	DB = client.Database("webapp")
 }
