@@ -24,6 +24,6 @@
 <script>
 function updateUrl() {
     var uuid = document.getElementById('post_uuid').value;
-    document.getElementById('url_field').value = window.location.origin + '/' + uuid;
+    document.getElementById('url_field').value = window.location.origin + '/staff/files/' + uuid;
 }
 </script>

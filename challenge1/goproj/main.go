@@ -5,6 +5,7 @@ import (
 	_ "public_disclosure/models"
 	_ "public_disclosure/routers"
 
+	"net/http"
 	"strings"
 
 	"github.com/beego/beego/v2/client/orm"
@@ -41,11 +42,21 @@ func main() {
 
 	})
 
+	beego.BConfig.WebConfig.Session.SessionCookieSecure = true
+	beego.BConfig.WebConfig.Session.SessionCookieSameSite = http.SameSiteNoneMode
+
 	beego.InsertFilter("*", beego.FinishRouter, func(ctx *beecontext.Context) {
 		cookies := ctx.ResponseWriter.Header()["Set-Cookie"]
 		for i, c := range cookies {
-			if strings.Contains(c, "_xsrf=") && !strings.Contains(c, "SameSite=") {
-				cookies[i] = c + "; SameSite=Strict"
+			if strings.Contains(c, "_xsrf=") {
+				newCookie := c
+				if !strings.Contains(c, "SameSite=") {
+					newCookie += "; SameSite=Strict"
+				}
+				if !strings.Contains(c, "Secure") {
+					newCookie += "; Secure"
+				}
+				cookies[i] = newCookie
 			}
 		}
 	})
