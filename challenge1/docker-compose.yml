@@ -4,3 +4,6 @@ services:
     restart: always
     ports:
       - "8083:8111"
+  bot:
+    build: ./bot
+    restart: always
