@@ -42,8 +42,6 @@ func main() {
 
 	})
 
-	})
-
 	beego.RunWithMiddleWares(":8111", cookieHardeningMiddleware)
 }
 
