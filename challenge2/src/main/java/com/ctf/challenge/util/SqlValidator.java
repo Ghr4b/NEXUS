@@ -36,7 +36,7 @@ public class SqlValidator {
             "SUBSTRING", "SUBSTR", "MID", // can slice/reconstruct strings
             "REVERSE",
             "REPLACE", // can reconstruct blocked tokens
-            "TRANSLATE",
+            "TRANSLATE", "FILE_READ", "CSVREAD", "CSVWRITE",
 
             // Math/system functions with side effects
             "RAND", "RANDOM", // timing side-channel
@@ -65,15 +65,6 @@ public class SqlValidator {
             return "";
         }
 
-        String upper = input.toUpperCase();
-        for (String kw : HARD_BLOCK_KEYWORDS) {
-            if (upper.contains(kw)) {
-                throw new IllegalArgumentException(
-                        "Your search contained potentially harmful characters and was blocked. " +
-                                "Please use plain product names or descriptions.");
-            }
-        }
-
         String sanitized = input;
         sanitized = sanitized.replaceAll("(?i)FILE_WRITE", "");
         sanitized = sanitized.replaceAll("(?i)FILE_READ", "");
@@ -86,6 +77,14 @@ public class SqlValidator {
         sanitized = sanitized.replaceAll("(?i)<[a-zA-Z/!][^>]*>", "");
         sanitized = sanitized.replaceAll("(?i)&[a-zA-Z]{2,6};", "");
 
+        String upper = sanitized.toUpperCase();
+        for (String kw : HARD_BLOCK_KEYWORDS) {
+            if (upper.contains(kw)) {
+                throw new IllegalArgumentException(
+                        "Your search contained potentially harmful characters and was blocked. " +
+                                "Please use plain product names or descriptions.");
+            }
+        }
         return sanitized;
     }
 }

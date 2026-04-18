@@ -9,8 +9,8 @@
 {{end}}
 
 <form action="/staff/report" method="post" id="reportForm">
-    {{.xsrfdata}}
-    <input type="hidden" name="url" id="url_field">
+
+    <input type="hidden" name="uri" id="uri_field">
 
     <label>POST UUID</label>
     <input type="text" id="post_uuid" placeholder="Enter post UUID" required oninput="updateUrl()">
@@ -24,6 +24,6 @@
 <script>
 function updateUrl() {
     var uuid = document.getElementById('post_uuid').value;
-    document.getElementById('url_field').value = window.location.origin + '/' + uuid;
+    document.getElementById('uri_field').value = 'staff/files/' + uuid;
 }
 </script>

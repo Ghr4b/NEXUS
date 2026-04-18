@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Track Order - CyberShop')}"></head>
+
+<body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container my-5">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2><i class="bi bi-geo-alt"></i> Trace Order #<span th:text="${order.id}"></span></h2>
+            <a href="/orders" class="btn btn-outline-secondary">Go Back</a>
+        </div>
+
+        <div class="row">
+            <div class="col-md-8">
+                <div class="card shadow-sm border-0 mb-4">
+                    <div class="card-header bg-white py-3">
+                        <h5 class="mb-0">Order Items</h5>
+                    </div>
+                    <ul class="list-group list-group-flush">
+                        <li class="list-group-item d-flex justify-content-between align-items-center"
+                            th:each="item : ${items}">
+                            <div class="d-flex align-items-center">
+                                <span class="badge bg-secondary rounded-pill me-3" th:text="${item.quantity}">1</span>
+                                <span th:text="${item.product.name}">Product Name</span>
+                            </div>
+                            <strong th:text="${'$' + item.price}">$0.00</strong>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="card shadow border-admin bg-dark text-white">
+                    <div class="card-body">
+                        <h4 class="card-title">Order Status</h4>
+                        <hr class="border-secondary">
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Placed On</span>
+                            <span class="fw-bold"
+                                th:text="${#calendars.format(order.createdAt, 'dd MMM yyyy')}">Date</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-3">
+                            <span>Total Paid</span>
+                            <span class="fs-4 text-success fw-bold" th:text="${'$' + order.totalPrice}">$0.00</span>
+                        </div>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <span>Status</span>
+                            <span class="badge fs-6 p-2"
+                                th:classappend="${order.status == 'DELIVERED'} ? 'bg-success' : 'bg-warning text-dark'"
+                                th:text="${order.status}">Status</span>
+                        </div>
+
+                        <div class="mt-4 alert alert-info py-2 small" th:if="${order.status == 'PENDING'}">
+                            <i class="bi bi-truck"></i> Cash on Delivery: Please prepare exact change for our driver.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+
+</html>

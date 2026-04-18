@@ -18,7 +18,7 @@
         <a href="/staff/auditlog?TargetType=DisclosureFile&TargetId={{.File.Id}}"><button style="background-color: var(--secondary-color);">VIEW FILE AUDIT LOG</button></a>
 
         <form action="/staff/files/{{.File.Uuid}}/delete" method="post" onsubmit="return confirm('ARE YOU SURE YOU WANT TO DELETE THIS CASE? THIS ACTION CANNOT BE UNDONE.');">
-            {{.xsrfdata}}
+
             <button type="submit" style="background-color: var(--accent-color);">DELETE CASE FILE</button>
         </form>
     </div>
@@ -28,7 +28,7 @@
     <div class="upload-section" style="border: 1px dashed var(--secondary-color); padding: 20px; margin-bottom: 20px;">
         <h4>UPLOAD NEW EVIDENCE</h4>
         <form action="/staff/upload" method="post" enctype="multipart/form-data">
-            {{.xsrfdata}}
+
             <input type="hidden" name="uuid" value="{{.File.Uuid}}">
             <label>SELECT FILE</label>
             <input type="file" name="attachment" required style="color: var(--text-color); margin-bottom: 10px;">
@@ -56,7 +56,7 @@
                     <td>{{date .UploadedAt "Y-m-d H:i"}}</td>
                     <td>
                         <form action="/staff/attachments/{{.Id}}/delete" method="post" style="display:inline;" onsubmit="return confirm('DELETE EVIDENCE?');">
-                            {{$.xsrfdata}}
+
                             <input type="hidden" name="file_uuid" value="{{$.File.Uuid}}">
                             <button type="submit" style="background-color: transparent; border: 1px solid var(--accent-color); color: var(--accent-color); padding: 5px;">[X]</button>
                         </form>

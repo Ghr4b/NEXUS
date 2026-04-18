@@ -6,7 +6,7 @@
     {{end}}
 
     <form action="/staff/register" method="post">
-        {{.xsrfdata}}
+
         <label>USERNAME</label>
         <input type="text" name="username" required>
         

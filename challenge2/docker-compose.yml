@@ -3,16 +3,16 @@ services:
     build: .
     ports:
       - "8080:8080"
-    read_only: true # Blocks arbitrary file drops (e.g., cron jobs, web shells)
+    read_only: true
     tmpfs:
       - /tmp
-    restart: always # CRITICAL: Ensures the app restarts after the healthcheck fails
+    restart: always
     deploy:
       resources:
         limits:
-          cpus: '0.50' # CRITICAL: Restricts CPU so the ReDoS hangs the container instantly
+          cpus: "0.50"
     healthcheck:
-      test: [ "CMD", "curl", "-f", "http://localhost:8080/" ]
+      test: ["CMD", "curl", "-f", "http://localhost:8080/"]
       interval: 10s
       timeout: 3s
       retries: 3

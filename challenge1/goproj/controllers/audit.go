@@ -2,7 +2,6 @@ package controllers
 
 import (
 	"fmt"
-	"html/template"
 	"public_disclosure/models"
 	"public_disclosure/services"
 
@@ -21,7 +20,6 @@ func (c *AuditController) Prepare() {
 		c.Redirect("/staff/login", 302)
 		c.StopRun()
 	}
-	c.Data["xsrfdata"] = template.HTML(c.XSRFFormHTML())
 	c.Layout = "layout/staff.tpl"
 }
 

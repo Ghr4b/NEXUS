@@ -10,7 +10,7 @@
 
 <div class="file-card">
     <form action="/staff/profile" method="post">
-        {{.xsrfdata}}
+
         <label>FIRST NAME</label>
         <input type="text" name="first_name" value="{{.User.FirstName}}" required>
         

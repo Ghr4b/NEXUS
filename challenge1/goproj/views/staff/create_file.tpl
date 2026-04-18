@@ -5,7 +5,7 @@
 {{end}}
 
 <form action="/staff/create" method="post">
-    {{.xsrfdata}}
+
     <label>CASE TITLE</label>
     <input type="text" name="title" required>
     

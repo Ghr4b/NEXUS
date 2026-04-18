@@ -5,7 +5,7 @@
 {{end}}
 
 <form action="/staff/files/{{.File.Uuid}}/update" method="post">
-    {{.xsrfdata}}
+
     <label>CASE TITLE</label>
     <input type="text" name="title" value="{{.File.Title}}" required>
     

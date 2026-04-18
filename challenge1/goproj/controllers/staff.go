@@ -3,7 +3,6 @@ package controllers
 import (
 	"crypto/sha256"
 	"fmt"
-	"html/template"
 	"io"
 	"path/filepath"
 	"public_disclosure/models"
@@ -24,7 +23,6 @@ func (c *StaffController) Prepare() {
 		c.Redirect("/staff/login", 302)
 		c.StopRun()
 	}
-	c.Data["xsrfdata"] = template.HTML(c.XSRFFormHTML())
 	c.Layout = "layout/staff.tpl"
 }
 

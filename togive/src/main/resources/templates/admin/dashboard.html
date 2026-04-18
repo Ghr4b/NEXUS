@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+
+<head th:replace="~{fragments/layout :: head('Admin Dashboard - CyberShop')}"></head>
+
+<body>
+    <div th:replace="~{fragments/layout :: navbar}"></div>
+
+    <div class="container-fluid py-4" style="background-color: #212529;">
+        <div class="container text-white">
+            <h1 class="display-5 fw-bold"><i class="bi bi-shield-lock text-danger"></i> Command Center</h1>
+            <p class="lead">Manage orders, products, and incoming shipments.</p>
+        </div>
+    </div>
+
+    <div class="container my-5">
+        <ul class="nav nav-tabs mb-4" id="adminTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+                <button class="nav-link active fw-bold" data-bs-toggle="tab" data-bs-target="#ordersTab" type="button"
+                    role="tab" aria-selected="true">
+                    <i class="bi bi-basket text-primary"></i> Live Orders
+                </button>
+            </li>
+            <li class="nav-item" role="presentation">
+                <button class="nav-link fw-bold" data-bs-toggle="tab" data-bs-target="#productsTab" type="button"
+                    role="tab" aria-selected="false">
+                    <i class="bi bi-box text-success"></i> Inventory
+                </button>
+            </li>
+        </ul>
+
+        <div class="tab-content" id="adminTabsContent">
+            <div class="tab-pane fade show active" id="ordersTab" role="tabpanel" tabindex="0">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <table class="table table-hover align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>User ID</th>
+                                    <th>Total</th>
+                                    <th>Date</th>
+                                    <th>Status</th>
+                                    <th>Action</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="order : ${orders}">
+                                    <td class="fw-bold" th:text="${order.id}">0</td>
+                                    <td th:text="${order.userId}">0</td>
+                                    <td th:text="${'$' + order.totalPrice}">$0.00</td>
+                                    <td th:text="${#calendars.format(order.createdAt, 'dd MMM yyyy HH:mm')}">Date</td>
+                                    <td>
+                                        <span class="badge"
+                                            th:classappend="${order.status == 'DELIVERED'} ? 'bg-success' : 'bg-warning text-dark'"
+                                            th:text="${order.status}">Status</span>
+                                    </td>
+                                    <td>
+                                        <form action="/admin/orders/update" method="post"
+                                            class="d-flex align-items-center">
+                                            <input type="hidden" name="orderId" th:value="${order.id}">
+                                            <select name="status" class="form-select form-select-sm me-2 w-auto">
+                                                <option value="PENDING" th:selected="${order.status == 'PENDING'}">
+                                                    PENDING</option>
+                                                <option value="DELIVERED" th:selected="${order.status == 'DELIVERED'}">
+                                                    DELIVERED</option>
+                                            </select>
+                                            <button type="submit" class="btn btn-sm btn-primary">Update</button>
+                                        </form>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <div class="tab-pane fade" id="productsTab" role="tabpanel" tabindex="0">
+                <div class="card shadow-sm border-0">
+                    <div class="card-body p-0">
+                        <table class="table table-striped align-middle mb-0">
+                            <thead class="table-dark">
+                                <tr>
+                                    <th>ID</th>
+                                    <th>Image</th>
+                                    <th>Name</th>
+                                    <th>Price</th>
+                                    <th>Stock</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="product : ${products}">
+                                    <td th:text="${product.id}">0</td>
+                                    <td><img th:src="${product.imageUrl}" width="40" class="rounded"></td>
+                                    <td class="fw-bold" th:text="${product.name}">Name</td>
+                                    <td th:text="${'$' + product.price}">$0.00</td>
+                                    <td>
+                                        <span class="badge bg-secondary rounded-pill fs-6"
+                                            th:text="${product.stockQuantity}">0</span>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div th:replace="~{fragments/layout :: scripts}"></div>
+</body>
+
+</html>

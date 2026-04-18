@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"html/template"
 	"public_disclosure/models"
 
 	"github.com/beego/beego/v2/client/orm"
@@ -13,7 +12,6 @@ type PublicController struct {
 }
 
 func (c *PublicController) Prepare() {
-	c.Data["xsrfdata"] = template.HTML(c.XSRFFormHTML())
 	c.Layout = "layout/public.tpl"
 }
 

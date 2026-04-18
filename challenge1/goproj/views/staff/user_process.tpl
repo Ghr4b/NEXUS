@@ -13,7 +13,7 @@
     <h3>ACTIONS</h3>
 
     <form id="approve-form" action="/staff/management/approve" method="post" style="margin-bottom: 20px;">
-        {{.xsrfdata}}
+
         <input type="hidden" name="user_id" value="{{.User.Id}}">
         <label>ASSIGN DEPARTMENT:</label>
         <select name="department_id" style="margin-right: 10px;">
@@ -25,7 +25,7 @@
     </form>
 
     <form id="reject-form" action="/staff/management/reject" method="post">
-        {{.xsrfdata}}
+
         <input type="hidden" name="user_id" value="{{.User.Id}}">
         <button type="submit" style="background-color: var(--accent-color);">REJECT & DELETE</button>
     </form>

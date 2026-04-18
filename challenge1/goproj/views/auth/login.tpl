@@ -6,7 +6,7 @@
     {{end}}
 
     <form action="/staff/login" method="post">
-        {{.xsrfdata}}
+
         <label>AGENT ID (USERNAME)</label>
         <input type="text" name="username" required>
         
