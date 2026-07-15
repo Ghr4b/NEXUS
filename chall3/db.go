@@ -19,7 +19,7 @@ var MongoClient *mongo.Client
 // ConnectDB establishes the connection to MongoDB
 func ConnectDB() {
 	// Full URI with credentials
-	uri := "mongodb+srv://Ghr4b:9EpQ6UnOxaSXChb3@cluster0.yavsujd.mongodb.net/?appName=Cluster0"
+	uri := "mongodb+srv://Ghr4b@mongodb.net/?appName=Cluster0"
 
 	clientOptions := options.Client().ApplyURI(uri)
 
